@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlparse
 
 from pydantic import BaseModel, field_validator, model_validator
 
 from app.models.enums import ComponentType, HealthStatus
-from datetime import datetime
 
 # ---------------------------------------------------------------------------
 # Constants
