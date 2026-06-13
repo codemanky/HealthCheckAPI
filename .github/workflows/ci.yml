@@ -14,7 +14,7 @@ jobs:
     name: Lint & Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@v4  # v4.2.2
       - uses: astral-sh/setup-uv@v5  # v5
         with:
           version: "latest"
@@ -27,7 +27,7 @@ jobs:
     name: Type Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@v4  # v4.2.2
       - uses: astral-sh/setup-uv@v5  # v5
       - name: Install dependencies
         run: uv venv && uv pip install -e ".[dev]"
@@ -38,7 +38,7 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@v4  # v4.2.2
       - name: Install graphviz
         run: sudo apt-get install -y graphviz
       - uses: astral-sh/setup-uv@v5  # v5
@@ -47,7 +47,7 @@ jobs:
       - name: Run tests with coverage
         run: uv run pytest tests/ --cov=app --cov-report=xml --cov-report=term-missing -v
       - name: Upload coverage report
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1  # v4.6.1
+        uses: actions/upload-artifact@v4  # v4.6.1
         with:
           name: coverage-report
           path: coverage.xml
@@ -56,7 +56,7 @@ jobs:
     name: Docker Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@v4  # v4.2.2
       - name: Build Docker image
         run: docker build -t healthcheck-api:ci .
       - name: Verify image runs
@@ -70,7 +70,7 @@ jobs:
     name: Terraform Validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/checkout@v4  # v4.2.2
       - uses: hashicorp/setup-terraform@v3  # v3.1.2
         with:
           terraform_version: "~1.5"
