@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 from collections import deque
+from typing import TYPE_CHECKING
 
 from app.core.exceptions import DAGValidationError
 from app.core.logging import get_logger
-from app.models.schemas import ComponentInput, DAGInput
+
+if TYPE_CHECKING:
+    from app.models.schemas import ComponentInput, DAGInput
 
 logger = get_logger(__name__)
 

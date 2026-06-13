@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import httpx
 
 from app.models.enums import HealthStatus
-from app.models.schemas import ComponentInput
 from app.services.checks.base import BaseHealthCheck
+
+if TYPE_CHECKING:
+    from app.models.schemas import ComponentInput
 
 # Latency threshold above which a 2xx response is considered DEGRADED
 _DEGRADED_LATENCY_MS = 500.0

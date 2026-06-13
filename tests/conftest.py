@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import typing
 import json
+import typing
 from pathlib import Path
 
 import pytest

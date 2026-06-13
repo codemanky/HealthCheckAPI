@@ -1,9 +1,9 @@
 """Enumerations for health status and component types."""
 
-from enum import Enum
+from enum import StrEnum
 
 
-class HealthStatus(str, Enum):
+class HealthStatus(StrEnum):
     """Possible health states for a component or the overall system."""
 
     HEALTHY = "healthy"
@@ -12,7 +12,7 @@ class HealthStatus(str, Enum):
     UNKNOWN = "unknown"
 
 
-class ComponentType(str, Enum):
+class ComponentType(StrEnum):
     """Logical category of a system component."""
 
     SERVICE = "service"

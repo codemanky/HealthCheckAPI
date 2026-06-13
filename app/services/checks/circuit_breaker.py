@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import time
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class CircuitState(str, Enum):
+class CircuitState(StrEnum):
     """States of a Circuit Breaker."""
 
     CLOSED = "closed"  # Operating normally, requests pass through

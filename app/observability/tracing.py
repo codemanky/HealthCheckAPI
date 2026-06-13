@@ -2,8 +2,14 @@
 
 from __future__ import annotations
 
-from app.core.config import Settings
+from typing import TYPE_CHECKING
+
 from app.core.logging import get_logger
+
+if TYPE_CHECKING:
+    from opentelemetry.sdk.trace import TracerProvider
+
+    from app.core.config import Settings
 
 logger = get_logger(__name__)
 
@@ -68,7 +74,6 @@ def configure_tracing(settings: Settings) -> None:
 def _add_console_exporter(provider: object) -> None:
     """Add a console span exporter for local development visibility."""
     try:
-        from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import SimpleSpanProcessor
         from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
             InMemorySpanExporter,

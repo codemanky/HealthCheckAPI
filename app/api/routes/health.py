@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 import time
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Depends
 
 from app.api.dependencies import get_health_checker
 from app.core.config import Settings, get_settings
 from app.models.schemas import DAGInput, LivenessResponse, SystemHealthResponse
-from app.services.health_checker import HealthCheckerService
+
+if TYPE_CHECKING:
+    from app.services.health_checker import HealthCheckerService
 
 router = APIRouter(tags=["Health"])
 

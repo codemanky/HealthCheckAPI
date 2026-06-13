@@ -44,7 +44,7 @@ def diamond_dag() -> DAGInput:
 
 class TestDAGBuild:
     def test_builds_adjacency_list(self, svc: DAGService, linear_dag: DAGInput) -> None:
-        graph, comp_map = svc.build(linear_dag)
+        graph, _comp_map = svc.build(linear_dag)
         assert "a" in graph
         assert graph["a"] == ["b"]
         assert graph["b"] == ["c"]
@@ -70,7 +70,7 @@ class TestCycleDetection:
         svc.validate_no_cycles(graph)  # Should not raise
 
     def test_self_loop_rejected_by_schema(self, svc: DAGService) -> None:
-        with pytest.raises(Exception):  # Pydantic ValidationError
+        with pytest.raises(ValueError):  # Pydantic ValidationError inherits from ValueError
             DAGInput(
                 components=[
                     ComponentInput(id="a", name="A", type=ComponentType.SERVICE, endpoint="http://a.sim/healthy")

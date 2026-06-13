@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import Response
 
 from app.api.dependencies import get_health_checker, get_visualizer
 from app.models.schemas import DAGInput, DAGVisualizationResponse, SystemHealthResponse
-from app.services.health_checker import HealthCheckerService
-from app.services.visualizer import DAGVisualizer
+
+if TYPE_CHECKING:
+    from app.services.health_checker import HealthCheckerService
+    from app.services.visualizer import DAGVisualizer
 
 router = APIRouter(tags=["DAG Visualization"])
 

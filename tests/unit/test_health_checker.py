@@ -120,11 +120,11 @@ class TestHealthCheckerEvaluation:
             components=[
                 ComponentInput(
                     id="flaky", name="Flaky", type=ComponentType.SERVICE, endpoint="http://flaky.sim/flaky?rate=1.0"
-                ),  # Always fails without retry, but flaky.sim Simulator doesn't support stateful retry by default.
-                # Actually simulated_check.py `/flaky` might just be random, but let's test that the check mechanism runs without errors.
+                ),  # Always fails without retry, flaky.sim Simulator lacks stateful retry.
+                # Verify check mechanism runs without errors.
             ],
             edges=[],
         )
         result = await checker.evaluate(dag)
-        # It's random, so it could be healthy or unhealthy. Just verify it completes and doesn't crash.
+        # Verify it completes without crashing.
         assert result.overall_status in (HealthStatus.HEALTHY, HealthStatus.UNHEALTHY)

@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import asyncio
 import time
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from app.models.enums import HealthStatus
-from app.models.schemas import ComponentInput
 from app.services.checks.base import BaseHealthCheck
+
+if TYPE_CHECKING:
+    from app.models.schemas import ComponentInput
 
 
 class TcpHealthCheck(BaseHealthCheck):
@@ -43,7 +46,7 @@ class TcpHealthCheck(BaseHealthCheck):
             )
 
         start = time.monotonic()
-        reader, writer = await asyncio.open_connection(host, port)
+        _reader, writer = await asyncio.open_connection(host, port)
         elapsed_ms = (time.monotonic() - start) * 1000
         writer.close()
         await writer.wait_closed()

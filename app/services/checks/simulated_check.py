@@ -15,11 +15,14 @@ from __future__ import annotations
 
 import asyncio
 import random
+from typing import TYPE_CHECKING
 from urllib.parse import parse_qs, urlparse
 
 from app.models.enums import HealthStatus
-from app.models.schemas import ComponentInput
 from app.services.checks.base import BaseHealthCheck
+
+if TYPE_CHECKING:
+    from app.models.schemas import ComponentInput
 
 
 class SimulatedHealthCheck(BaseHealthCheck):

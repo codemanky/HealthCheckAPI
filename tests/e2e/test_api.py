@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from httpx import AsyncClient
-from typing import Any
-
 import json
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 import pytest
+
+if TYPE_CHECKING:
+    from httpx import AsyncClient
 
 FIXTURES_DIR = Path(__file__).parent.parent / "fixtures"
 

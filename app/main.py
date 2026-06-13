@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,6 +17,9 @@ from app.core.logging import configure_logging, get_logger
 from app.observability.metrics import make_metrics_app
 from app.observability.middleware import RequestLoggingMiddleware
 from app.observability.tracing import configure_tracing
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
 
 logger = get_logger(__name__)
 

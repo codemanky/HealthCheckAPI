@@ -1,9 +1,8 @@
 """Structured logging configuration using structlog."""
 
-import typing
-
 import logging
 import sys
+import typing
 from typing import Any
 
 import structlog
@@ -32,7 +31,8 @@ def configure_logging(settings: Settings) -> None:
     ]
 
     if settings.log_format == "json":
-        processors: list[Any] = shared_processors + [
+        processors: list[Any] = [
+            *shared_processors,
             structlog.processors.dict_tracebacks,
             structlog.processors.JSONRenderer(),
         ]
@@ -44,9 +44,7 @@ def configure_logging(settings: Settings) -> None:
             ],
         )
     else:
-        processors = shared_processors + [
-            structlog.dev.ConsoleRenderer(colors=True),
-        ]
+        processors = [*shared_processors, structlog.dev.ConsoleRenderer(colors=True)]
         formatter = structlog.stdlib.ProcessorFormatter(
             foreign_pre_chain=shared_processors,
             processors=[

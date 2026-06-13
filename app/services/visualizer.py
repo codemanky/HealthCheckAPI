@@ -2,15 +2,16 @@
 
 from __future__ import annotations
 
-import typing
-
 import base64
+import typing
 
 import graphviz
 
 from app.core.logging import get_logger
 from app.models.enums import HealthStatus
-from app.models.schemas import ComponentHealth, ComponentInput, DAGInput
+
+if typing.TYPE_CHECKING:
+    from app.models.schemas import ComponentHealth, ComponentInput, DAGInput
 
 logger = get_logger(__name__)
 
@@ -88,7 +89,7 @@ class DAGVisualizer:
         )
 
         # Add nodes
-        component_map = {c.id: c for c in dag_input.components}
+        {c.id: c for c in dag_input.components}
         for comp in dag_input.components:
             status = status_map.get(comp.id, HealthStatus.UNKNOWN)
             colors = _STATUS_COLORS[status]
@@ -120,7 +121,7 @@ class DAGVisualizer:
             unhealthy_nodes=len(unhealthy_ids),
         )
 
-        return typing.cast(bytes, dot.pipe(format="png"))
+        return typing.cast("bytes", dot.pipe(format="png"))
 
     def render_base64(
         self,

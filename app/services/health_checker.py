@@ -30,12 +30,7 @@ except ImportError:
     tracer = None
 
 import contextlib
-
-
 import typing
-
-if typing.TYPE_CHECKING:
-    from typing import Any, Iterator
 
 
 @contextlib.contextmanager

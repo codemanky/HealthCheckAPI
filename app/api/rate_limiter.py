@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 import time
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import JSONResponse
 
 from app.core.config import get_settings
+
+if TYPE_CHECKING:
+    from fastapi import Request
 
 
 class RateLimiter:

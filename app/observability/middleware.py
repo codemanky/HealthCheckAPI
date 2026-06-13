@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 import time
+from typing import TYPE_CHECKING
 
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
-from starlette.requests import Request
-from starlette.responses import Response
 
 from app.core.logging import get_logger
 from app.observability.metrics import HTTP_REQUEST_DURATION, HTTP_REQUESTS_TOTAL
+
+if TYPE_CHECKING:
+    from starlette.requests import Request
+    from starlette.responses import Response
 
 logger = get_logger(__name__)
 

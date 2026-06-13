@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from app.core.config import Settings, get_settings
-from app.models.schemas import ComponentInput
-from app.services.checks.base import BaseHealthCheck
 from app.services.checks.http_check import HttpHealthCheck
 from app.services.checks.registry import DEFAULT_CHECK_REGISTRY
 from app.services.checks.simulated_check import SimulatedHealthCheck
 from app.services.checks.tcp_check import TcpHealthCheck
+
+if TYPE_CHECKING:
+    from app.models.schemas import ComponentInput
+    from app.services.checks.base import BaseHealthCheck
 
 
 def get_check_strategy(
