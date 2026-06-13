@@ -40,7 +40,7 @@ async def visualize_dag(
         default=True,
         description="Run health evaluation before rendering to colour nodes by status.",
     ),
-    format: str = Query(  # noqa: A002
+    format: str = Query(
         default="png",
         description="Response format: 'png' (binary) or 'base64' (JSON).",
     ),

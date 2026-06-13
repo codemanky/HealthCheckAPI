@@ -21,9 +21,7 @@ class HttpHealthCheck(BaseHealthCheck):
     - Non-2xx or connection error  → UNHEALTHY
     """
 
-    async def _perform_check(
-        self, component: ComponentInput
-    ) -> tuple[HealthStatus, str]:
+    async def _perform_check(self, component: ComponentInput) -> tuple[HealthStatus, str]:
         """Issue an HTTP GET and evaluate the response.
 
         Args:

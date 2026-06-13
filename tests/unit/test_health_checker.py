@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from app.models.enums import ComponentType, HealthStatus
-from app.models.schemas import DAGInput, ComponentInput
+from app.models.schemas import ComponentInput, DAGInput
 from app.services.health_checker import HealthCheckerService
 
 
@@ -35,10 +35,7 @@ class TestHealthCheckerEvaluation:
             components=[
                 make_comp("a"),
                 make_comp("b"),
-                ComponentInput(
-                    id="c", name="C", type=ComponentType.DATABASE,
-                    endpoint="tcp://c.sim:5432/unhealthy"
-                ),
+                ComponentInput(id="c", name="C", type=ComponentType.DATABASE, endpoint="tcp://c.sim:5432/unhealthy"),
             ],
             edges=[("a", "b"), ("b", "c")],
         )
@@ -56,8 +53,7 @@ class TestHealthCheckerEvaluation:
             components=[
                 make_comp("parent"),
                 ComponentInput(
-                    id="child", name="Child", type=ComponentType.DATABASE,
-                    endpoint="tcp://child.sim:5432/unhealthy"
+                    id="child", name="Child", type=ComponentType.DATABASE, endpoint="tcp://child.sim:5432/unhealthy"
                 ),
             ],
             edges=[("parent", "child")],
@@ -106,10 +102,7 @@ class TestHealthCheckerEvaluation:
         checker._settings.evaluation_timeout_seconds = 0.1
         dag = DAGInput(
             components=[
-                ComponentInput(
-                    id="slow", name="Slow", type=ComponentType.SERVICE,
-                    endpoint="http://slow.sim/timeout"
-                ),
+                ComponentInput(id="slow", name="Slow", type=ComponentType.SERVICE, endpoint="http://slow.sim/timeout"),
             ],
             edges=[],
         )
@@ -122,14 +115,13 @@ class TestHealthCheckerEvaluation:
         checker = HealthCheckerService()
         checker._settings.check_max_retries = 2
         checker._settings.check_retry_base_delay_seconds = 0.1
-        
+
         dag = DAGInput(
             components=[
                 ComponentInput(
-                    id="flaky", name="Flaky", type=ComponentType.SERVICE,
-                    endpoint="http://flaky.sim/flaky?rate=1.0"
-                ), # Always fails without retry, but flaky.sim Simulator doesn't support stateful retry by default.
-                   # Actually simulated_check.py `/flaky` might just be random, but let's test that the check mechanism runs without errors.
+                    id="flaky", name="Flaky", type=ComponentType.SERVICE, endpoint="http://flaky.sim/flaky?rate=1.0"
+                ),  # Always fails without retry, but flaky.sim Simulator doesn't support stateful retry by default.
+                # Actually simulated_check.py `/flaky` might just be random, but let's test that the check mechanism runs without errors.
             ],
             edges=[],
         )

@@ -23,11 +23,11 @@ class CheckConfig:
 
 
 DEFAULT_CHECK_REGISTRY: dict[ComponentType, CheckConfig] = {
-    ComponentType.SERVICE:  CheckConfig(protocol="http", timeout_ms=3000),
-    ComponentType.DATABASE: CheckConfig(protocol="tcp",  timeout_ms=5000, default_port=5432),
-    ComponentType.CACHE:    CheckConfig(protocol="tcp",  timeout_ms=2000, default_port=6379),
-    ComponentType.QUEUE:    CheckConfig(protocol="tcp",  timeout_ms=3000, default_port=5672),
-    ComponentType.GATEWAY:  CheckConfig(protocol="http", timeout_ms=3000),
+    ComponentType.SERVICE: CheckConfig(protocol="http", timeout_ms=3000),
+    ComponentType.DATABASE: CheckConfig(protocol="tcp", timeout_ms=5000, default_port=5432),
+    ComponentType.CACHE: CheckConfig(protocol="tcp", timeout_ms=2000, default_port=6379),
+    ComponentType.QUEUE: CheckConfig(protocol="tcp", timeout_ms=3000, default_port=5672),
+    ComponentType.GATEWAY: CheckConfig(protocol="http", timeout_ms=3000),
     ComponentType.EXTERNAL: CheckConfig(protocol="http", timeout_ms=5000),
-    ComponentType.CUSTOM:   CheckConfig(protocol="http", timeout_ms=3000),
+    ComponentType.CUSTOM: CheckConfig(protocol="http", timeout_ms=3000),
 }

@@ -57,9 +57,7 @@ class ComponentInput(BaseModel):
         if not v:
             raise ValueError("Component ID must not be empty")
         if len(v) > MAX_COMPONENT_ID_LENGTH:
-            raise ValueError(
-                f"Component ID '{v}' exceeds maximum length of {MAX_COMPONENT_ID_LENGTH} characters"
-            )
+            raise ValueError(f"Component ID '{v}' exceeds maximum length of {MAX_COMPONENT_ID_LENGTH} characters")
         if not _VALID_COMPONENT_ID_RE.match(v):
             raise ValueError(
                 f"Component ID '{v}' contains invalid characters. "
@@ -75,9 +73,7 @@ class ComponentInput(BaseModel):
         if not v:
             raise ValueError("Component name must not be empty")
         if len(v) > MAX_COMPONENT_NAME_LENGTH:
-            raise ValueError(
-                f"Component name exceeds maximum length of {MAX_COMPONENT_NAME_LENGTH} characters"
-            )
+            raise ValueError(f"Component name exceeds maximum length of {MAX_COMPONENT_NAME_LENGTH} characters")
         return v
 
     @field_validator("endpoint")
@@ -91,8 +87,7 @@ class ComponentInput(BaseModel):
 
         if parsed.scheme not in _VALID_SCHEMES:
             raise ValueError(
-                f"Invalid endpoint scheme '{parsed.scheme}'. "
-                f"Allowed schemes: {', '.join(sorted(_VALID_SCHEMES))}"
+                f"Invalid endpoint scheme '{parsed.scheme}'. Allowed schemes: {', '.join(sorted(_VALID_SCHEMES))}"
             )
 
         hostname = parsed.hostname or ""
@@ -142,9 +137,7 @@ class DAGInput(BaseModel):
 
     def _validate_component_count(self) -> None:
         if not self.components:
-            raise ValueError(
-                "[EMPTY_COMPONENTS] The 'components' list must not be empty."
-            )
+            raise ValueError("[EMPTY_COMPONENTS] The 'components' list must not be empty.")
         if len(self.components) > MAX_COMPONENTS:
             raise ValueError(
                 f"[TOO_MANY_COMPONENTS] DAG has {len(self.components)} components "
@@ -176,9 +169,7 @@ class DAGInput(BaseModel):
                 )
 
             # Rule: edge IDs must reference existing components
-            unknown = [
-                nid for nid in (from_id, to_id) if nid not in component_ids
-            ]
+            unknown = [nid for nid in (from_id, to_id) if nid not in component_ids]
             if unknown:
                 raise ValueError(
                     f"[EDGE_REFERENCES_UNKNOWN_COMPONENT] Edge '{from_id}' → '{to_id}' "
@@ -188,9 +179,7 @@ class DAGInput(BaseModel):
             # Rule: no duplicate edges
             edge = (from_id, to_id)
             if edge in seen_edges:
-                raise ValueError(
-                    f"[DUPLICATE_EDGE] Edge '{from_id}' → '{to_id}' appears more than once."
-                )
+                raise ValueError(f"[DUPLICATE_EDGE] Edge '{from_id}' → '{to_id}' appears more than once.")
             seen_edges.add(edge)
 
 

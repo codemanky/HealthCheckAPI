@@ -31,9 +31,7 @@ class DAGService:
             A tuple of (graph, component_map) where graph maps each component ID
             to its list of dependency IDs, and component_map maps ID to ComponentInput.
         """
-        component_map: dict[str, ComponentInput] = {
-            c.id: c for c in dag_input.components
-        }
+        component_map: dict[str, ComponentInput] = {c.id: c for c in dag_input.components}
 
         # Initialise every node with an empty dependency list
         graph: Graph = {c.id: [] for c in dag_input.components}
@@ -60,9 +58,7 @@ class DAGService:
             for dep in deps:
                 in_degree[dep] = in_degree.get(dep, 0) + 1
 
-        queue: deque[str] = deque(
-            node for node, deg in in_degree.items() if deg == 0
-        )
+        queue: deque[str] = deque(node for node, deg in in_degree.items() if deg == 0)
         visited_count = 0
 
         while queue:

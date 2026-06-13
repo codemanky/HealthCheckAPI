@@ -61,7 +61,7 @@ class BaseHealthCheck(ABC):
             A ``ComponentHealth`` result regardless of outcome.
         """
         start = time.monotonic()
-        
+
         # Check circuit breaker
         if self._circuit_breaker and not self._circuit_breaker.allow_request(component.endpoint):
             status = HealthStatus.UNHEALTHY
@@ -78,7 +78,7 @@ class BaseHealthCheck(ABC):
         else:
             status = HealthStatus.UNKNOWN
             message = ""
-            
+
             for attempt in range(1 + self.max_retries):
                 try:
                     status, message = await asyncio.wait_for(
@@ -87,8 +87,8 @@ class BaseHealthCheck(ABC):
                     )
                     if status != HealthStatus.UNHEALTHY or attempt == self.max_retries:
                         break
-                    
-                    delay = self.retry_base_delay * (2 ** attempt)
+
+                    delay = self.retry_base_delay * (2**attempt)
                     logger.warning(
                         "Health check attempt failed, retrying",
                         component_id=component.id,
@@ -97,11 +97,11 @@ class BaseHealthCheck(ABC):
                         error=message,
                     )
                     await asyncio.sleep(delay)
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     status = HealthStatus.UNHEALTHY
                     message = f"Check timed out after {self.timeout}s"
                     if attempt < self.max_retries:
-                        delay = self.retry_base_delay * (2 ** attempt)
+                        delay = self.retry_base_delay * (2**attempt)
                         logger.warning(
                             "Health check attempt timed out, retrying",
                             component_id=component.id,
@@ -113,7 +113,7 @@ class BaseHealthCheck(ABC):
                     status = HealthStatus.UNHEALTHY
                     message = f"Check failed with error: {exc}"
                     if attempt < self.max_retries:
-                        delay = self.retry_base_delay * (2 ** attempt)
+                        delay = self.retry_base_delay * (2**attempt)
                         logger.warning(
                             "Health check attempt error, retrying",
                             component_id=component.id,
@@ -159,9 +159,7 @@ class BaseHealthCheck(ABC):
         )
 
     @abstractmethod
-    async def _perform_check(
-        self, component: ComponentInput
-    ) -> tuple[HealthStatus, str]:
+    async def _perform_check(self, component: ComponentInput) -> tuple[HealthStatus, str]:
         """Execute the actual health probe.
 
         Args:

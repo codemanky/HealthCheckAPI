@@ -23,9 +23,7 @@ class TcpHealthCheck(BaseHealthCheck):
     - Timeout                 → UNHEALTHY (handled by BaseHealthCheck)
     """
 
-    async def _perform_check(
-        self, component: ComponentInput
-    ) -> tuple[HealthStatus, str]:
+    async def _perform_check(self, component: ComponentInput) -> tuple[HealthStatus, str]:
         """Open a TCP connection and close it immediately.
 
         Args:

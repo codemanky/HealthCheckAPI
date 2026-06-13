@@ -1,8 +1,9 @@
+from typing import Any
+
 """Custom exceptions and FastAPI exception handlers."""
 
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
-
 
 
 class DAGValidationError(Exception):
@@ -18,7 +19,7 @@ class DAGValidationError(Exception):
         self,
         code: str,
         message: str,
-        details: dict | None = None,
+        details: dict[str, Any] | None = None,
     ) -> None:
         self.code = code
         self.message = message
@@ -37,16 +38,13 @@ class HealthCheckTimeoutError(Exception):
     def __init__(self, component_id: str, timeout_seconds: float) -> None:
         self.component_id = component_id
         self.timeout_seconds = timeout_seconds
-        super().__init__(
-            f"Health check for component '{component_id}' timed out "
-            f"after {timeout_seconds}s"
-        )
+        super().__init__(f"Health check for component '{component_id}' timed out after {timeout_seconds}s")
 
 
 def _error_response(
     code: str,
     message: str,
-    details: dict | None = None,
+    details: dict[str, Any] | None = None,
     status_code: int = 422,
 ) -> JSONResponse:
     """Build a consistent error response body."""
@@ -70,9 +68,7 @@ def register_exception_handlers(app: FastAPI) -> None:
     """
 
     @app.exception_handler(DAGValidationError)
-    async def dag_validation_error_handler(
-        request: Request, exc: DAGValidationError
-    ) -> JSONResponse:
+    async def dag_validation_error_handler(request: Request, exc: DAGValidationError) -> JSONResponse:
         return _error_response(
             code=exc.code,
             message=exc.message,
@@ -81,9 +77,7 @@ def register_exception_handlers(app: FastAPI) -> None:
         )
 
     @app.exception_handler(HealthCheckTimeoutError)
-    async def health_check_timeout_handler(
-        request: Request, exc: HealthCheckTimeoutError
-    ) -> JSONResponse:
+    async def health_check_timeout_handler(request: Request, exc: HealthCheckTimeoutError) -> JSONResponse:
         return _error_response(
             code="HEALTH_CHECK_TIMEOUT",
             message=str(exc),
@@ -95,9 +89,7 @@ def register_exception_handlers(app: FastAPI) -> None:
         )
 
     @app.exception_handler(Exception)
-    async def unhandled_exception_handler(
-        request: Request, exc: Exception
-    ) -> JSONResponse:
+    async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
         return _error_response(
             code="INTERNAL_ERROR",
             message="An unexpected error occurred.",

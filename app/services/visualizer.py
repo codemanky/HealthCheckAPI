@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import typing
+
 import base64
-from io import BytesIO
 
 import graphviz
 
@@ -15,10 +16,10 @@ logger = get_logger(__name__)
 
 # Warm color palette — no blue tones
 _STATUS_COLORS: dict[HealthStatus, dict[str, str]] = {
-    HealthStatus.HEALTHY:   {"fill": "#2ecc71", "font": "#ffffff", "border": "#27ae60"},
-    HealthStatus.DEGRADED:  {"fill": "#f39c12", "font": "#ffffff", "border": "#e67e22"},
+    HealthStatus.HEALTHY: {"fill": "#2ecc71", "font": "#ffffff", "border": "#27ae60"},
+    HealthStatus.DEGRADED: {"fill": "#f39c12", "font": "#ffffff", "border": "#e67e22"},
     HealthStatus.UNHEALTHY: {"fill": "#e74c3c", "font": "#ffffff", "border": "#c0392b"},
-    HealthStatus.UNKNOWN:   {"fill": "#95a5a6", "font": "#ffffff", "border": "#7f8c8d"},
+    HealthStatus.UNKNOWN: {"fill": "#95a5a6", "font": "#ffffff", "border": "#7f8c8d"},
 }
 
 _EDGE_COLOR = "#2c3e50"
@@ -54,9 +55,7 @@ class DAGVisualizer:
         if health_results:
             status_map = {r.id: r.status for r in health_results}
 
-        unhealthy_ids = {
-            cid for cid, s in status_map.items() if s == HealthStatus.UNHEALTHY
-        }
+        unhealthy_ids = {cid for cid, s in status_map.items() if s == HealthStatus.UNHEALTHY}
 
         dot = graphviz.Digraph(
             name="HealthCheckDAG",
@@ -121,8 +120,7 @@ class DAGVisualizer:
             unhealthy_nodes=len(unhealthy_ids),
         )
 
-        png_bytes = dot.pipe(format="png")
-        return png_bytes
+        return typing.cast(bytes, dot.pipe(format="png"))
 
     def render_base64(
         self,
@@ -148,13 +146,10 @@ class DAGVisualizer:
         Shows component name, type, and status emoji on two lines.
         """
         status_icon = {
-            HealthStatus.HEALTHY:   "✓",
-            HealthStatus.DEGRADED:  "⚠",
+            HealthStatus.HEALTHY: "✓",
+            HealthStatus.DEGRADED: "⚠",
             HealthStatus.UNHEALTHY: "✗",
-            HealthStatus.UNKNOWN:   "?",
+            HealthStatus.UNKNOWN: "?",
         }[status]
 
-        return (
-            f"{status_icon} {comp.name}\n"
-            f"[{comp.type.value}] {status.value.upper()}"
-        )
+        return f"{status_icon} {comp.name}\n[{comp.type.value}] {status.value.upper()}"

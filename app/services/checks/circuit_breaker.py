@@ -9,8 +9,9 @@ from typing import Any
 
 class CircuitState(str, Enum):
     """States of a Circuit Breaker."""
-    CLOSED = "closed"        # Operating normally, requests pass through
-    OPEN = "open"            # Failing, requests are fast-failed
+
+    CLOSED = "closed"  # Operating normally, requests pass through
+    OPEN = "open"  # Failing, requests are fast-failed
     HALF_OPEN = "half-open"  # Recovering, one request allowed to test
 
 
@@ -27,7 +28,7 @@ class CircuitBreaker:
     def __init__(self, failure_threshold: int = 3, recovery_seconds: float = 30.0) -> None:
         self.failure_threshold = failure_threshold
         self.recovery_seconds = recovery_seconds
-        
+
         # Internal state keyed by endpoint
         # Dict maps endpoint -> {"state": CircuitState, "failures": int, "last_failure_time": float}
         self._state: dict[str, dict[str, Any]] = {}
@@ -85,6 +86,7 @@ class CircuitBreaker:
 
 # Global singleton instance for the application
 _circuit_breaker: CircuitBreaker | None = None
+
 
 def get_circuit_breaker(failure_threshold: int = 3, recovery_seconds: float = 30.0) -> CircuitBreaker:
     """Get the global circuit breaker instance."""

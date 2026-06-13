@@ -44,11 +44,7 @@ def get_check_strategy(
 
     # Determine timeout from type registry
     registry_entry = DEFAULT_CHECK_REGISTRY.get(component.type)
-    timeout_seconds = (
-        registry_entry.timeout_ms / 1000
-        if registry_entry
-        else cfg.default_check_timeout_seconds
-    )
+    timeout_seconds = registry_entry.timeout_ms / 1000 if registry_entry else cfg.default_check_timeout_seconds
 
     # Simulated endpoint detection
     if hostname.endswith(cfg.sim_hostname_suffix):

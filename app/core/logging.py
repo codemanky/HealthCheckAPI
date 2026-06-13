@@ -1,5 +1,7 @@
 """Structured logging configuration using structlog."""
 
+import typing
+
 import logging
 import sys
 from typing import Any
@@ -74,9 +76,7 @@ def configure_logging(settings: Settings) -> None:
     logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
-def _add_otel_context(
-    logger: Any, method: str, event_dict: dict[str, Any]
-) -> dict[str, Any]:
+def _add_otel_context(logger: Any, method: str, event_dict: dict[str, Any]) -> dict[str, Any]:
     """Inject OpenTelemetry trace/span IDs into log records when available."""
     try:
         from opentelemetry import trace
@@ -91,13 +91,6 @@ def _add_otel_context(
     return event_dict
 
 
-def get_logger(name: str) -> structlog.stdlib.BoundLogger:
-    """Get a bound structlog logger.
-
-    Args:
-        name: Logger name, typically __name__ of the calling module.
-
-    Returns:
-        Configured structlog BoundLogger.
-    """
-    return structlog.get_logger(name)  # type: ignore[return-value]
+def get_logger(name: str) -> typing.Any:
+    """Get a structured logger instance."""
+    return structlog.get_logger(name)

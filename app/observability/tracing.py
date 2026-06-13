@@ -40,7 +40,7 @@ def configure_tracing(settings: Settings) -> None:
         try:
             from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
 
-            exporter = CloudTraceSpanExporter()
+            exporter = CloudTraceSpanExporter()  # type: ignore[no-untyped-call]
             provider.add_span_processor(BatchSpanProcessor(exporter))
             logger.info("GCP Cloud Trace exporter configured")
         except Exception as exc:
@@ -79,9 +79,7 @@ def _add_console_exporter(provider: object) -> None:
             from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 
             cast_provider: TracerProvider = provider  # type: ignore[assignment]
-            cast_provider.add_span_processor(
-                SimpleSpanProcessor(ConsoleSpanExporter())
-            )
+            cast_provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
         except ImportError:
             pass
     except ImportError:

@@ -72,7 +72,9 @@ class TestCycleDetection:
     def test_self_loop_rejected_by_schema(self, svc: DAGService) -> None:
         with pytest.raises(Exception):  # Pydantic ValidationError
             DAGInput(
-                components=[ComponentInput(id="a", name="A", type=ComponentType.SERVICE, endpoint="http://a.sim/healthy")],
+                components=[
+                    ComponentInput(id="a", name="A", type=ComponentType.SERVICE, endpoint="http://a.sim/healthy")
+                ],
                 edges=[("a", "a")],
             )
 

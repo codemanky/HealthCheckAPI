@@ -24,19 +24,28 @@ from app.services.dag import DAGService, Graph
 
 try:
     from opentelemetry import trace
-    tracer = trace.get_tracer(__name__)
+
+    tracer: trace.Tracer | None = trace.get_tracer(__name__)
 except ImportError:
     tracer = None
 
 import contextlib
 
+
+import typing
+
+if typing.TYPE_CHECKING:
+    from typing import Any, Iterator
+
+
 @contextlib.contextmanager
-def optional_span(name: str, **kwargs):
+def optional_span(name: str, **kwargs: typing.Any) -> typing.Iterator[typing.Any]:
     if tracer:
         with tracer.start_as_current_span(name, **kwargs) as span:
             yield span
     else:
         yield None
+
 
 logger = get_logger(__name__)
 
@@ -88,9 +97,7 @@ class HealthCheckerService:
 
         # Warn (don't reject) on disconnected graphs
         if not self._dag.check_connectivity(graph):
-            logger.warning(
-                "DAG is not fully connected — processing all subgraphs independently"
-            )
+            logger.warning("DAG is not fully connected — processing all subgraphs independently")
 
         bfs_levels = self._dag.bfs_levels(graph)
         # Evaluate in reverse BFS order: leaves first, then their dependents.
@@ -100,7 +107,7 @@ class HealthCheckerService:
 
         # Track results keyed by component ID
         results: dict[str, ComponentHealth] = {}
-        
+
         async def _eval_loop() -> None:
             for level_idx, level_nodes in enumerate(eval_order):
                 logger.debug(
@@ -118,8 +125,8 @@ class HealthCheckerService:
                     )
                     for node_id in level_nodes
                 ]
-                level_results: list[ComponentHealth | BaseException] = (
-                    await asyncio.gather(*tasks, return_exceptions=True)
+                level_results: list[ComponentHealth | BaseException] = await asyncio.gather(
+                    *tasks, return_exceptions=True
                 )
 
                 for node_id, result in zip(level_nodes, level_results, strict=True):
@@ -143,10 +150,8 @@ class HealthCheckerService:
         timeout_occurred = False
         with optional_span("dag.evaluate"):
             try:
-                await asyncio.wait_for(
-                    _eval_loop(), timeout=self._settings.evaluation_timeout_seconds
-                )
-            except asyncio.TimeoutError:
+                await asyncio.wait_for(_eval_loop(), timeout=self._settings.evaluation_timeout_seconds)
+            except TimeoutError:
                 timeout_occurred = True
                 logger.error("Overall evaluation timed out", timeout=self._settings.evaluation_timeout_seconds)
                 # Fill remaining components with UNKNOWN
@@ -165,12 +170,7 @@ class HealthCheckerService:
                         )
 
         # Collect results in BFS (top-down) order for the response
-        ordered_results = [
-            results[node_id]
-            for level in bfs_levels
-            for node_id in level
-            if node_id in results
-        ]
+        ordered_results = [results[node_id] for level in bfs_levels for node_id in level if node_id in results]
 
         # Record per-component Prometheus metrics
         for r in ordered_results:
@@ -232,10 +232,13 @@ class HealthCheckerService:
         """
         dep_ids = self._dag.get_dependencies(graph, component.id)
 
-        with optional_span(f"health_check.{component.id}", attributes={
-            "component.id": component.id,
-            "component.type": component.type.value,
-        }) as span:
+        with optional_span(
+            f"health_check.{component.id}",
+            attributes={
+                "component.id": component.id,
+                "component.type": component.type.value,
+            },
+        ) as span:
             # Check actual health
             strategy = get_check_strategy(component, self._settings)
             result = await strategy.check(component, dep_ids)
@@ -254,22 +257,29 @@ class HealthCheckerService:
                 original_status=result.status.value,
                 propagated_status=propagated_status.value,
                 unhealthy_deps=[
-                    d for d in dep_ids
-                    if existing_results.get(d, ComponentHealth(
-                        id=d, name=d, type=component.type,
-                        status=HealthStatus.UNKNOWN, endpoint="",
-                        latency_ms=0, message="", checked_at=datetime.now(UTC),
-                        dependencies=[]
-                    )).status == HealthStatus.UNHEALTHY
+                    d
+                    for d in dep_ids
+                    if existing_results.get(
+                        d,
+                        ComponentHealth(
+                            id=d,
+                            name=d,
+                            type=component.type,
+                            status=HealthStatus.UNKNOWN,
+                            endpoint="",
+                            latency_ms=0,
+                            message="",
+                            checked_at=datetime.now(UTC),
+                            dependencies=[],
+                        ),
+                    ).status
+                    == HealthStatus.UNHEALTHY
                 ],
             )
             result = result.model_copy(
                 update={
                     "status": propagated_status,
-                    "message": (
-                        result.message
-                        + " [degraded due to unhealthy dependency]"
-                    ),
+                    "message": (result.message + " [degraded due to unhealthy dependency]"),
                 }
             )
 
@@ -300,9 +310,7 @@ class HealthCheckerService:
             return own_status
 
         has_unhealthy_dep = any(
-            existing_results[d].status == HealthStatus.UNHEALTHY
-            for d in dep_ids
-            if d in existing_results
+            existing_results[d].status == HealthStatus.UNHEALTHY for d in dep_ids if d in existing_results
         )
 
         if has_unhealthy_dep and own_status == HealthStatus.HEALTHY:
@@ -337,13 +345,12 @@ class HealthCheckerService:
                 f"{r.type.value:<{col_widths['type']}} "
                 f"{r.status.value.upper():<{col_widths['status']}} "
                 f"{r.latency_ms:<{col_widths['latency']}.1f} "
-                f"{r.message[:col_widths['message']]:<{col_widths['message']}}"
+                f"{r.message[: col_widths['message']]:<{col_widths['message']}}"
             )
 
         lines += [
             sep,
-            f"  Overall: {overall.value.upper()}  |  "
-            f"Evaluated {len(results)} components in {evaluation_time_ms:.0f}ms",
+            f"  Overall: {overall.value.upper()}  |  Evaluated {len(results)} components in {evaluation_time_ms:.0f}ms",
             sep,
             "",
         ]

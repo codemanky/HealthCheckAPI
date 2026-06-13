@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import typing
 import json
 from pathlib import Path
 
@@ -10,8 +11,8 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 from app.main import create_app
-from app.models.schemas import ComponentInput, DAGInput
 from app.models.enums import ComponentType
+from app.models.schemas import ComponentInput, DAGInput
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
@@ -43,14 +44,14 @@ def dag_with_failure() -> DAGInput:
         components=[
             ComponentInput(id="a", name="Service A", type=ComponentType.SERVICE, endpoint="http://a.sim/healthy"),
             ComponentInput(id="b", name="Service B", type=ComponentType.SERVICE, endpoint="http://b.sim/healthy"),
-            ComponentInput(id="c", name="Database",  type=ComponentType.DATABASE, endpoint="tcp://c.sim:5432/unhealthy"),
+            ComponentInput(id="c", name="Database", type=ComponentType.DATABASE, endpoint="tcp://c.sim:5432/unhealthy"),
         ],
         edges=[("a", "b"), ("b", "c")],
     )
 
 
 @pytest_asyncio.fixture
-async def client():
+async def client() -> typing.AsyncGenerator[AsyncClient, None]:
     """Async HTTP test client for the FastAPI app."""
     app = create_app()
     async with AsyncClient(

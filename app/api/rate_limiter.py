@@ -36,7 +36,7 @@ class RateLimiter:
         # Initialize or clean up old requests
         if client_ip not in self._requests:
             self._requests[client_ip] = []
-        
+
         # Keep only requests within the last minute
         self._requests[client_ip] = [ts for ts in self._requests[client_ip] if ts > cutoff]
 
@@ -54,6 +54,7 @@ class RateLimiter:
 # Global singleton
 _rate_limiter: RateLimiter | None = None
 
+
 def get_rate_limiter(rpm: int) -> RateLimiter:
     """Get the global rate limiter instance."""
     global _rate_limiter
@@ -65,9 +66,7 @@ def get_rate_limiter(rpm: int) -> RateLimiter:
 class RateLimitingMiddleware(BaseHTTPMiddleware):
     """Middleware to enforce rate limits on specific paths."""
 
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Any:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Any:
         settings = get_settings()
 
         if not settings.rate_limit_enabled:
@@ -88,7 +87,7 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
                     "error": {
                         "code": "RATE_LIMIT_EXCEEDED",
                         "message": "Too many requests",
-                        "details": {"retry_after_seconds": round(retry_after, 1)}
+                        "details": {"retry_after_seconds": round(retry_after, 1)},
                     }
                 },
                 headers={"Retry-After": str(int(retry_after) + 1)},

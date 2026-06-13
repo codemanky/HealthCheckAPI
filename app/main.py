@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncIterator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
 from app import __version__
 from app.api.rate_limiter import RateLimitingMiddleware
@@ -88,7 +87,7 @@ def create_app() -> FastAPI:
     # --- Prometheus /metrics endpoint ---
     if settings.metrics_enabled:
         metrics_app = make_metrics_app()
-        app.mount("/metrics", metrics_app)
+        app.mount("/metrics", metrics_app)  # type: ignore
 
     return app
 

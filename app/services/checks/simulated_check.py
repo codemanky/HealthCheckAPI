@@ -30,9 +30,7 @@ class SimulatedHealthCheck(BaseHealthCheck):
     query parameters drive the behaviour.
     """
 
-    async def _perform_check(
-        self, component: ComponentInput
-    ) -> tuple[HealthStatus, str]:
+    async def _perform_check(self, component: ComponentInput) -> tuple[HealthStatus, str]:
         """Simulate a health check based on the endpoint path.
 
         Args:
