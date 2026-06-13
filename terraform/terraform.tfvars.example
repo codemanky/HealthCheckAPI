@@ -1,0 +1,8 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is gitignored — never commit real values.
+
+project_id  = "your-gcp-project-id"
+region      = "us-central1"
+environment = "dev"
+app_name    = "healthcheck-api"
+image_tag   = "latest"

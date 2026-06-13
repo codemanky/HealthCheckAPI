@@ -1,0 +1,28 @@
+{
+  "components": [
+    { "id": "step-1",  "name": "API Gateway",         "type": "gateway",  "endpoint": "http://api-gateway.sim/healthy" },
+    { "id": "step-2",  "name": "Auth Service",         "type": "service",  "endpoint": "http://auth-service.sim/healthy" },
+    { "id": "step-3",  "name": "Order Service",        "type": "service",  "endpoint": "http://order-service.sim/healthy" },
+    { "id": "step-4",  "name": "Inventory Database",   "type": "database", "endpoint": "tcp://inventory-db.sim:5432/unhealthy" },
+    { "id": "step-5",  "name": "Payment Service",      "type": "service",  "endpoint": "http://payment-service.sim/healthy" },
+    { "id": "step-6",  "name": "Payment Gateway",      "type": "external", "endpoint": "http://payment-gw.sim/degraded" },
+    { "id": "step-7",  "name": "Notification Service", "type": "service",  "endpoint": "http://notification.sim/healthy" },
+    { "id": "step-8",  "name": "Email Queue",          "type": "queue",    "endpoint": "tcp://email-queue.sim:5672/healthy" },
+    { "id": "step-9",  "name": "Session Cache",        "type": "cache",    "endpoint": "tcp://session-cache.sim:6379/unhealthy" },
+    { "id": "step-10", "name": "Analytics Pipeline",   "type": "service",  "endpoint": "http://analytics.sim/flaky?rate=0.3" },
+    { "id": "step-11", "name": "Data Warehouse",       "type": "database", "endpoint": "tcp://data-warehouse.sim:5432/slow?latency=200" }
+  ],
+  "edges": [
+    ["step-1",  "step-2"],
+    ["step-2",  "step-3"],
+    ["step-3",  "step-4"],
+    ["step-3",  "step-5"],
+    ["step-5",  "step-6"],
+    ["step-5",  "step-7"],
+    ["step-7",  "step-8"],
+    ["step-7",  "step-9"],
+    ["step-8",  "step-10"],
+    ["step-9",  "step-10"],
+    ["step-10", "step-11"]
+  ]
+}

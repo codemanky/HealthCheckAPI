@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: astral-sh/setup-uv@e92bafb5e34da63af4e773b08b52039f4d0f69e2  # v5
+        with:
+          version: "latest"
+      - name: Install dev dependencies
+        run: uv pip install --system ruff
+      - name: Ruff lint
+        run: ruff check app/ tests/
+      - name: Ruff format check
+        run: ruff format --check app/ tests/
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: astral-sh/setup-uv@e92bafb5e34da63af4e773b08b52039f4d0f69e2  # v5
+      - name: Install dependencies
+        run: uv pip install --system -e ".[dev]"
+      - name: mypy
+        run: mypy app/
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - name: Install graphviz
+        run: sudo apt-get install -y graphviz
+      - uses: astral-sh/setup-uv@e92bafb5e34da63af4e773b08b52039f4d0f69e2  # v5
+      - name: Install dependencies
+        run: uv pip install --system -e ".[dev]"
+      - name: Run tests with coverage
+        run: pytest tests/ --cov=app --cov-report=xml --cov-report=term-missing -v
+      - name: Upload coverage report
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1  # v4.6.1
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+  build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - name: Build Docker image
+        run: docker build -t healthcheck-api:ci .
+      - name: Verify image runs
+        run: |
+          docker run -d --name test-container -p 8080:8080 healthcheck-api:ci
+          sleep 10
+          curl -f http://localhost:8080/health
+          docker stop test-container
+
+  terraform-validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269ef065  # v3.1.2
+        with:
+          terraform_version: "~1.5"
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: terraform
+      - name: Terraform Init (local backend)
+        run: terraform init -backend=false
+        working-directory: terraform
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: terraform
