@@ -70,6 +70,7 @@ jobs:
           service: ${{ env.APP_NAME }}-dev
           image: ${{ needs.build-push.outputs.image }}
           region: ${{ env.REGION }}
+          flags: "--allow-unauthenticated"
 
   smoke-test:
     name: Smoke Test
