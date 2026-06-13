@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-      - uses: astral-sh/setup-uv@e92bafb5e34da63af4e773b08b52039f4d0f69e2  # v5
+      - uses: astral-sh/setup-uv@v5  # v5
         with:
           version: "latest"
       - name: Install dev dependencies
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-      - uses: astral-sh/setup-uv@e92bafb5e34da63af4e773b08b52039f4d0f69e2  # v5
+      - uses: astral-sh/setup-uv@v5  # v5
       - name: Install dependencies
         run: uv pip install --system -e ".[dev]"
       - name: mypy
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
       - name: Install graphviz
         run: sudo apt-get install -y graphviz
-      - uses: astral-sh/setup-uv@e92bafb5e34da63af4e773b08b52039f4d0f69e2  # v5
+      - uses: astral-sh/setup-uv@v5  # v5
       - name: Install dependencies
         run: uv pip install --system -e ".[dev]"
       - name: Run tests with coverage
