@@ -9,9 +9,7 @@ from urllib.parse import urlparse
 from pydantic import BaseModel, field_validator, model_validator
 
 from app.models.enums import ComponentType, HealthStatus
-
-if TYPE_CHECKING:
-    from datetime import datetime
+from datetime import datetime
 
 # ---------------------------------------------------------------------------
 # Constants
