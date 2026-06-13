@@ -6,6 +6,7 @@ on:
     branches: [main]
     types:
       - completed
+  workflow_dispatch:  # Allow manual triggering
 
 permissions:
   contents: read
@@ -19,7 +20,7 @@ env:
 
 jobs:
   build-push:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     name: Build & Push Image
     runs-on: ubuntu-latest
     outputs:
